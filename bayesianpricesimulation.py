@@ -17,7 +17,7 @@ from functions import *
 
 price_params = {
     "loc": 155,        # Mean price centered around the middle of the range
-    "scale": 5,        # Controls spread; a lower value means less variation
+    "scale": 50,        # Controls spread; a lower value means less variation
     "min": 15.99,      # Lower bound for valid prices
     "max": 250,        # Upper bound for valid prices
     "low": 15.99,      # Ensures consistency in price range
@@ -31,11 +31,11 @@ price_params = {
 #   - "uniform" for a shifted price distribution
 #   - "normal" for a mixed price distribution
 
-# Generate synthetic dataset with 100,000 samples using a uniform price distribution
+# Generate synthetic dataset with 1,000 samples using a uniform price distribution
 # (Switch to "normal" if a mixed distribution is preferred)
 
-data = generate_synthetic_data(n=100000, price_dist="normal", price_params=price_params)
-#data = generate_synthetic_data(n=100000, price_dist="uniform", price_params=price_params)
+data = generate_synthetic_data(n=1000, price_dist="normal", price_params=price_params)
+#data = generate_synthetic_data(n=1000, price_dist="uniform", price_params=price_params)
 
 # Split the generated data into training and calibration sets (80% training, 20% calibration)
 train_data, calib_data = train_test_split(data, test_size=0.2, random_state=42)
@@ -55,6 +55,12 @@ evaluate_model(trace, test_data=train_data, threshold=0.5)
 
 # Generate new test data to evaluate model stability
 test_data = generate_synthetic_data(n=1000000, price_dist="normal", price_params=price_params)
+
+# Create the distribution plot
+sns.displot(test_data, x="price", hue="buy", kind="kde")
+
+# Display the plot
+plt.show()
 
 # Evaluate the performance of the Bayesian model using the calibration data and a 0.5 decision threshold.
 evaluate_model(trace, test_data=test_data, threshold=0.5)
